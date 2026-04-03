@@ -1236,8 +1236,12 @@ let weekViewOffset=0;
 function shiftWeek(d){weekViewOffset+=d;renderWeekly();}
 const SUBJ_PLAN=['QA','DILR','VARC','QA','DILR','VARC','IMS'];
 function renderWeekly(){
-  const now=new Date(),dow=now.getDay();
-  const ws=new Date(now);ws.setDate(now.getDate()-dow+(weekViewOffset*7));ws.setHours(0,0,0,0);
+  const now=new Date();
+  // Convert to Indian timezone (UTC+5:30)
+  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+  const istNow = new Date(utc + (5.5 * 3600000));
+  const dow=istNow.getDay();
+  const ws=new Date(istNow);ws.setDate(istNow.getDate()-dow+(weekViewOffset*7));ws.setHours(0,0,0,0);
   const we=new Date(ws);we.setDate(ws.getDate()+6);
   document.getElementById('weekLabel').textContent=`${fmtDate(ws.toISOString().slice(0,10))} – ${fmtDate(we.toISOString().slice(0,10))}`;
   let hdr='',cards='';
