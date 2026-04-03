@@ -681,7 +681,7 @@ textarea{resize:vertical;min-height:60px}
 
 <script>
 // ─── CONSTANTS ───
-const CAT_DATE = new Date('2026-11-22T09:00:00');
+const CAT_DATE = new Date('2026-11-29T09:00:00');
 const STUDY_START = '2026-04-03'; // First real study day
 const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const MON_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -849,10 +849,21 @@ function showSyncStatus(state) {
 }
 
 // ─── HELPERS ───
-const todayStr = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+const todayStr = () => { 
+  const d=new Date(); 
+  // Convert to Indian timezone (UTC+5:30)
+  const utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+  const istTime = new Date(utc + (5.5 * 3600000));
+  return `${istTime.getFullYear()}-${String(istTime.getMonth()+1).padStart(2,'0')}-${String(istTime.getDate()).padStart(2,'0')}`; 
+};
 const fmtDate = ds => { const d=new Date(ds+'T12:00:00'); return `${d.getDate()} ${MON_SHORT[d.getMonth()]}`; };
-const daysUntilCAT = () => Math.max(0, Math.ceil((CAT_DATE - new Date()) / 86400000));
-
+const daysUntilCAT = () => {
+  const now = new Date();
+  // Convert to Indian timezone (UTC+5:30)
+  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+  const istNow = new Date(utc + (5.5 * 3600000));
+  return Math.max(0, Math.ceil((CAT_DATE - istNow) / 86400000));
+};
 // Quote: rotates daily using day-of-year so it changes each day
 function getDailyQuote() {
   const now = new Date();
