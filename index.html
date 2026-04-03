@@ -564,8 +564,7 @@ textarea{resize:vertical;min-height:60px}
 <!-- ===== CALENDAR ===== -->
 <div class="page-wrap" id="page-calendar"><div class="page-inner">
   <div class="cal-controls">
-    <button class="cal-mode-btn active" onclick="setCalMode(this,'week')">Week</button>
-    <button class="cal-mode-btn" onclick="setCalMode(this,'month')">Month</button>
+    <button class="cal-mode-btn active" onclick="setCalMode(this,'month')">Week</button>
     <button class="cal-mode-btn" onclick="setCalMode(this,'multi')">Multi-month</button>
     <div id="multiCount" style="display:none;align-items:center;gap:6px">
       <label style="font-size:11px;color:var(--text3)">Months:</label>
@@ -1236,28 +1235,25 @@ let weekViewOffset=0;
 function shiftWeek(d){weekViewOffset+=d;renderWeekly();}
 const SUBJ_PLAN=['QA','DILR','VARC','QA','DILR','VARC','IMS'];
 function renderWeekly(){
+  const t=phaseTargets();
+  const dailyWd=t.daily;
+  const dailyWe=6.5;
   const now=new Date();
-  // Convert to Indian timezone (UTC+5:30)
-  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-  const istNow = new Date(utc + (5.5 * 3600000));
-  const dow=istNow.getDay();
-  const ws=new Date(istNow);ws.setDate(istNow.getDate()-dow+(weekViewOffset*7));ws.setHours(0,0,0,0);
-  const we=new Date(ws);we.setDate(ws.getDate()+6);
-  document.getElementById('weekLabel').textContent=`${fmtDate(ws.toISOString().slice(0,10))} – ${fmtDate(we.toISOString().slice(0,10))}`;
+  const dow=now.getDay();
+  const localDS=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const sun=new Date(now.getFullYear(),now.getMonth(),now.getDate()-dow+(weekViewOffset*7));
+  document.getElementById('weekLabel').textContent=`${fmtDate(localDS(sun))} – ${fmtDate(localDS(new Date(sun.getFullYear(),sun.getMonth(),sun.getDate()+6)))}`;
   let hdr='',cards='';
   for(let i=0;i<7;i++){
-    const d=new Date(ws);d.setDate(ws.getDate()+i);const ds=d.toISOString().slice(0,10);
-    const isT=ds===todayStr();
+    const d=new Date(sun.getFullYear(),sun.getMonth(),sun.getDate()+i);
+    const ds=localDS(d);const isT=ds===todayStr();const isWe=i===0||i===6;const plan=isWe?dailyWe:dailyWd;
     hdr+=`<div class="day-col-head${isT?' today-h':''}">${DAY_NAMES[d.getDay()]}</div>`;
     const h=S.logs.filter(l=>l.date===ds).reduce((a,l)=>a+l.hours,0);
-    const plan=i===0||i===6?6.5:2;const isWe=i===0||i===6;
-    const done=h>=plan*.8;
-    const missed=isMissed(ds);
-    const tasksDone=(S.tasks[ds]||[]).length;
+    const done=h>=plan*.8;const missed=isMissed(ds);const tasksDone=(S.tasks[ds]||[]).length;
     cards+=`<div class="day-col-card${isT?' today-c':''}${done&&h>0?' done-c':''}${missed?' missed-c':''}">
       <div class="day-num${isT?' today-n':''}">${d.getDate()}</div>
       <span class="day-subj-pill" style="background:${SUBJ_BG[SUBJ_PLAN[i]]};color:${SUBJ_COLORS[SUBJ_PLAN[i]]};font-size:9px">${SUBJ_PLAN[i]}</span>
-      <span class="day-subj-pill" style="background:var(--surface3);color:var(--text3);font-size:9px">${isWe?'6.5h':'2h'} target</span>
+      <span class="day-subj-pill" style="background:var(--surface3);color:var(--text3);font-size:9px">${plan}h target</span>
       ${h>0?`<span class="day-subj-pill" style="background:var(--accent-lt);color:var(--accent);font-size:9px">${h.toFixed(1)}h logged</span>`:''}
       ${missed?`<span class="day-subj-pill" style="background:var(--red-lt);color:var(--red);font-size:9px">Missed</span>`:''}
       ${tasksDone>0?`<span class="day-subj-pill" style="background:var(--gold-lt);color:var(--gold);font-size:9px">${tasksDone} task${tasksDone>1?'s':''} done</span>`:''}
@@ -1267,16 +1263,17 @@ function renderWeekly(){
   document.getElementById('weekCards').innerHTML=cards;
   let pva='';
   for(let i=0;i<7;i++){
-    const d=new Date(ws);d.setDate(ws.getDate()+i);const ds=d.toISOString().slice(0,10);
+    const d=new Date(sun.getFullYear(),sun.getMonth(),sun.getDate()+i);
+    const ds=localDS(d);const isWe=i===0||i===6;const plan=isWe?dailyWe:dailyWd;
     const actual=S.logs.filter(l=>l.date===ds).reduce((a,l)=>a+l.hours,0);
-    const plan=i===0||i===6?6.5:2;const pct=Math.min(100,(actual/plan)*100);
+    const pct=Math.min(100,(actual/plan)*100);
     pva+=`<div class="bar-row"><div class="bar-lbl">${DAY_NAMES[d.getDay()]}</div><div class="bar-wrap"><div class="bar-fill" style="width:${pct}%;background:${actual>=plan?'var(--accent)':actual>0?'var(--gold)':'var(--surface3)'};">${actual>0?actual.toFixed(1)+'h':''}</div></div><div class="bar-val" style="color:var(--text3)">${plan}h</div></div>`;
   }
   document.getElementById('wkPlanActual').innerHTML=pva;
 }
 
 // ─── CALENDAR ───
-let calMode='week',calOffset=0;
+let calMode='month',calOffset=0;
 function setCalMode(el,mode){
   document.querySelectorAll('.cal-mode-btn').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');calMode=mode;calOffset=0;
