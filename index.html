@@ -546,7 +546,7 @@ textarea{resize:vertical;min-height:60px}
 <div class="page-wrap" id="page-weekly"><div class="page-inner">
   <div class="card mb12">
     <div class="card-head" style="justify-content:space-between;padding:11px 13px">
-      <span>Weekly Planner</span>
+      <span></span>
       <div style="display:flex;gap:6px;align-items:center">
         <button class="btn sm ghost" onclick="shiftWeek(-1)">&#8592;</button>
         <span id="weekLabel" style="font-size:11px;color:var(--text2);font-family:var(--ff-mono)"></span>
@@ -564,7 +564,7 @@ textarea{resize:vertical;min-height:60px}
 <!-- ===== CALENDAR ===== -->
 <div class="page-wrap" id="page-calendar"><div class="page-inner">
   <div class="cal-controls">
-    <button class="cal-mode-btn active" onclick="setCalMode(this,'month')">Week</button>
+    <button class="cal-mode-btn active" onclick="setCalMode(this,'month')">Month</button>
     <button class="cal-mode-btn" onclick="setCalMode(this,'multi')">Multi-month</button>
     <div id="multiCount" style="display:none;align-items:center;gap:6px">
       <label style="font-size:11px;color:var(--text3)">Months:</label>
@@ -602,25 +602,9 @@ textarea{resize:vertical;min-height:60px}
         <div class="card-head"><span class="tag tag-varc" style="margin-right:4px">VARC</span>Arun Sharma — VARC</div>
         <div class="card-body" style="max-height:150px;overflow-y:auto" id="resVARC"></div>
       </div>
-      <div class="card">
-        <div class="card-head"><span class="tag tag-ims" style="margin-right:4px">IMS</span>IMS Self-Learning Modules</div>
-        <div class="card-body" style="max-height:300px;overflow-y:auto" id="resIMS">
-          <div id="imsMods"></div>
-          <div style="border-top:1px solid var(--border);padding-top:9px;margin-top:5px">
-            <div class="form-label" style="margin-bottom:5px">Add Chapter to Module</div>
-            <div class="ims-add-row">
-              <select id="imsModSelect" style="max-width:95px">
-                <option value="1">Module 1</option><option value="2">Module 2</option><option value="3">Module 3</option><option value="4">Module 4</option><option value="5">Module 5</option><option value="G">Grammar</option>
-              </select>
-              <input type="text" id="imsChapName" placeholder="Chapter name..." style="flex:1">
-              <button class="btn primary sm" onclick="addIMSChapter()">Add</button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
-  <p style="font-size:10px;color:var(--text4);text-align:center;margin-top:7px">Click LOD buttons to toggle — L1 / L2 / L3. For IMS, click to mark done / undo.</p>
+  <p style="font-size:10px;color:var(--text4);text-align:center;margin-top:7px">Click LOD buttons to toggle — L1 / L2 / L3.</p>
 </div></div>
 
 <!-- ===== VERBAL ===== -->
@@ -1310,12 +1294,13 @@ function renderCalWeek(wrap){
   html+='</div>';wrap.innerHTML=html;
 }
 function renderCalMonth(wrap,off){
+  const localDS=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   const now=new Date(),base=new Date(now.getFullYear(),now.getMonth()+off,1);
   document.getElementById('calNavLabel').textContent=`${MON_NAMES[base.getMonth()]} ${base.getFullYear()}`;
   const fd=base.getDay(),dim=new Date(base.getFullYear(),base.getMonth()+1,0).getDate();
   let html=`<div class="cal-header">${DAY_NAMES.map(d=>`<div class="cal-dow">${d}</div>`).join('')}</div><div class="cal-grid">`;
-  for(let i=0;i<fd;i++){const d=new Date(base);d.setDate(d.getDate()-(fd-i));html+=`<div class="cal-day other-month"><div class="dn">${d.getDate()}</div></div>`;}
-  for(let i=1;i<=dim;i++){const d=new Date(base.getFullYear(),base.getMonth(),i);html+=calDayHTML(d.toISOString().slice(0,10),false);}
+  for(let i=0;i<fd;i++){const d=new Date(base.getFullYear(),base.getMonth(),-(fd-i-1));html+=`<div class="cal-day other-month"><div class="dn">${d.getDate()}</div></div>`;}
+  for(let i=1;i<=dim;i++){const d=new Date(base.getFullYear(),base.getMonth(),i);html+=calDayHTML(localDS(d),false);}
   html+='</div>';wrap.innerHTML=html;
 }
 function renderCalMulti(wrap){
