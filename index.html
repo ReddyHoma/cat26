@@ -1001,8 +1001,11 @@ function renderToday() {
   const q=getDailyQuote();
   document.getElementById('quoteText').textContent=`"${q[0]}"`;
   document.getElementById('quoteAttr').textContent=q[1]?`— ${q[1]}`:'';
-  const t=phaseTargets(); const logged=todayHours(); const pct=Math.min(100,(logged/t.daily)*100);
-  document.getElementById('stTarget').textContent=t.daily.toFixed(1);
+  const t=phaseTargets(); const logged=todayHours();
+  const todayIsWe=new Date().getDay()===0||new Date().getDay()===6;
+  const todayTarget=todayIsWe?6.5:t.daily;
+  const pct=Math.min(100,(logged/todayTarget)*100);
+  document.getElementById('stTarget').textContent=todayTarget.toFixed(1);
   document.getElementById('stLogged').textContent=logged.toFixed(1);
   document.getElementById('stWeek').textContent=weekHours(0).toFixed(1);
   document.getElementById('stWeekTgt').textContent=t.weekly;
