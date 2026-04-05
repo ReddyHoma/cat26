@@ -884,7 +884,7 @@ function calcStreak() {
   const u=[...new Set(S.studiedDays)].sort().reverse();
   let s=0,chk=todayStr();
   for (const d of u) {
-    if (d===chk) { s++; const dt=new Date(chk+'T12:00:00'); dt.setDate(dt.getDate()-1); chk=dt.toISOString().slice(0,10); }
+    if (d===chk) { s++; const dt=new Date(chk+'T12:00:00'); dt.setDate(dt.getDate()-1); chk=`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`; }
     else if (d<chk) break;
   }
   return s;
@@ -953,7 +953,7 @@ function checkRedistribution() {
   const missed = [];
   for (let i=1;i<=7;i++) {
     const d=new Date(); d.setDate(d.getDate()-i);
-    const ds=d.toISOString().slice(0,10);
+    const ds=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     if (ds < STUDY_START) continue; // ignore dates before study started
     const hrs=S.logs.filter(l=>l.date===ds).reduce((a,l)=>a+l.hours,0);
     if (hrs<0.5) missed.push(ds);
@@ -1047,8 +1047,8 @@ function renderMiniWeek() {
   const el=document.getElementById('miniWeek');let html='';
   const t=phaseTargets();
   for(let i=0;i<7;i++){
-    const d=new Date(now);d.setDate(now.getDate()-dow+i);
-    const ds=d.toISOString().slice(0,10);
+    const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()-dow+i);
+    const ds=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     const h=S.logs.filter(l=>l.date===ds).reduce((a,l)=>a+l.hours,0);
     const isT=ds===todayStr();
     const plan=i===0||i===6?6.5:2;
@@ -1145,7 +1145,7 @@ function renderStreak(){
   const msgs=['Study begins today.','First session done.','Keep going.','Building momentum.','Consistent and strong.','Excellent discipline.','Outstanding dedication.','Exceptional commitment.'];
   document.getElementById('streakMsg').textContent=msgs[Math.min(s,msgs.length-1)];
   const cal=document.getElementById('strCal');let html='';
-  for(let i=41;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=d.toISOString().slice(0,10);html+=`<div class="str-day${S.studiedDays.includes(ds)?' studied':''}${ds===todayStr()?' today':''}" title="${ds}"></div>`;}
+  for(let i=41;i>=0;i--){const d=new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate()-i);const ds=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;html+=`<div class="str-day${S.studiedDays.includes(ds)?' studied':''}${ds===todayStr()?' today':''}" title="${ds}"></div>`;}
   cal.innerHTML=html;
   const ms=[{d:1,l:'First Session'},{d:7,l:'One Week'},{d:14,l:'Two Weeks'},{d:30,l:'One Month'},{d:60,l:'60 Days'},{d:100,l:'100 Days'},{d:180,l:'Six Months'}];
   document.getElementById('milestones').innerHTML=ms.map(m=>`<div class="milestone-chip${s>=m.d?' earned':''}"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/>${s>=m.d?'<polyline points="5 8 7 10 11 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>':''}</svg><span style="font-weight:500">${m.l}</span><span style="margin-left:auto;font-family:var(--ff-mono);font-size:10px">${m.d}d</span></div>`).join('');
@@ -1288,9 +1288,10 @@ function renderCalWeek(wrap){
   const now=new Date(),dow=now.getDay();
   const ws=new Date(now);ws.setDate(now.getDate()-dow+(calOffset*7));ws.setHours(0,0,0,0);
   const we=new Date(ws);we.setDate(ws.getDate()+6);
-  document.getElementById('calNavLabel').textContent=`${fmtDate(ws.toISOString().slice(0,10))} – ${fmtDate(we.toISOString().slice(0,10))}`;
+  const localDS=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  document.getElementById('calNavLabel').textContent=`${fmtDate(localDS(ws))} – ${fmtDate(localDS(we))}`;
   let html=`<div class="cal-header">${DAY_NAMES.map(d=>`<div class="cal-dow">${d}</div>`).join('')}</div><div class="cal-grid">`;
-  for(let i=0;i<7;i++){const d=new Date(ws);d.setDate(ws.getDate()+i);html+=calDayHTML(d.toISOString().slice(0,10),false);}
+  for(let i=0;i<7;i++){const d=new Date(ws.getFullYear(),ws.getMonth(),ws.getDate()+i);html+=calDayHTML(localDS(d),false);}
   html+='</div>';wrap.innerHTML=html;
 }
 function renderCalMonth(wrap,off){
