@@ -2044,7 +2044,7 @@
   <script>
     // ─── CONSTANTS ───
     const CAT_DATE = new Date('2026-11-29T00:00:00');
-    const STUDY_START = '2026-04-03'; // First real study day
+    const STUDY_START = '2026-06-02'; // Full-time prep start
     const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const MON_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     const MON_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -2124,19 +2124,19 @@
 
     const PHASE_DATA = [
       {
-        n: 1, name: 'Foundation', dates: 'May 12 – Jun 30', color: 'var(--blue)',
-        desc: 'Bridge (May 12–29): 1–2 hrs/day with internship — ET editorial daily, 1 RC passage, QA Arithmetic. Full days from May 30: 6 hrs/day structured across 4 sessions. QA Arithmetic LOD1+2 chapter by chapter. LR all chapters LOD1. RC 2 passages daily. No IMS, no SIMCATs.',
+        n: 1, name: 'Foundation', dates: 'Jun 2 – Jun 30', color: 'var(--blue)',
+        desc: 'Full-time prep from June 2. Gym 6–7:30am, study 9am–6pm. 6–8 hrs/day across 4 sessions. QA: finish all Arithmetic LOD1+2. DILR: finish all LR LOD1 + start DI. VARC: 2 RC passages daily. No IMS sectionals, no SIMCATs yet.',
         goals: [
-          'QA: Finish all Arithmetic chapters LOD1+2 (Ch3–Ch11)',
-          'LR: Finish all 12 chapters at LOD1',
-          'DI: Start Tables + Bar Graphs once Ratio-Proportion done',
+          'QA: Finish Arithmetic LOD1+2 — Ch5 Ratio through Ch11 TSD Apps',
+          'LR: Finish all 10 remaining chapters at LOD1',
+          'DI: Tables + Bar Charts LOD1 started',
           'RC: 2 passages/day, target 75%+ accuracy by Jun 30',
           'VA: Para Summary basics (FundaMakers PYQs)',
           'ET editorial: 1 article daily, 15 min, read for argument',
-          'Word Power Made Easy: Mon/Wed/Fri 30 min (finish Part 3)',
-          'No IMS sectionals, no SIMCATs until Phase 2',
-          'Session 1: 9–11am QA | Session 2: 11:15am–1:15pm DILR',
-          'Session 3: 2:15–4:15pm VARC | Session 4: 4:30–6pm Mixed',
+          'Word Power Made Easy: Part 3 Mon/Wed/Fri 30 min',
+          'No IMS sectionals, no SIMCATs until August',
+          'Session 1: 9–11:30am QA (2.5 hrs) | Session 2: 11:45am–1:45pm DILR (2 hrs)',
+          'Session 3: 2:45–4:15pm VARC (1.5 hrs) | Session 4: 4:30–6pm Mixed (1.5 hrs)',
         ]
       },
       {
@@ -2405,7 +2405,7 @@
       document.getElementById('topbarSub').textContent = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
       document.getElementById('topCountdown').textContent = daysUntilCAT();
       const p = currentPhase(); document.getElementById('sidebarPhase').textContent = `Phase ${p} — ${PHASE_DATA[p - 1].name}`;
-      const phaseStart = [new Date('2026-05-12'), new Date('2026-07-01'), new Date('2026-09-01'), new Date('2026-10-16')];
+      const phaseStart = [new Date('2026-06-02'), new Date('2026-07-01'), new Date('2026-09-01'), new Date('2026-10-16')];
       const phaseEnd = [new Date('2026-06-30'), new Date('2026-08-31'), new Date('2026-10-15'), CAT_DATE];
       const pct = Math.min(100, Math.max(0, ((now - phaseStart[p - 1]) / (phaseEnd[p - 1] - phaseStart[p - 1])) * 100));
       document.getElementById('sidebarPhaseBar').style.width = pct + '%';
@@ -2435,10 +2435,10 @@
     // ─── TODAY ───
     // Tasks are phase-aware — computed dynamically in renderToday
     const PHASE1_FULLDAY_TASKS = [
-      { id: 'p1a', text: 'Session 1 — QA: Arithmetic LOD1+2, current chapter', meta: '9:00 – 11:00 AM · 2 hrs', subj: 'QA' },
-      { id: 'p1b', text: 'Session 2 — DILR: LR chapter LOD1 (or DI once QA unlocks it)', meta: '11:15 AM – 1:15 PM · 2 hrs', subj: 'DILR' },
-      { id: 'p1c', text: 'Session 3 — VARC: 2 RC passages + analysis + ET editorial', meta: '2:15 – 4:15 PM · 2 hrs', subj: 'VARC' },
-      { id: 'p1d', text: 'Session 4 — Mixed: Word Power / Para Summary PYQs / 2IIMCAT QA', meta: '4:30 – 6:00 PM · 90 min', subj: 'Revision' },
+      { id: 'p1a', text: 'Session 1 — QA: Arithmetic LOD1+2, current chapter', meta: '9:00 – 11:30 AM · 2.5 hrs', subj: 'QA' },
+      { id: 'p1b', text: 'Session 2 — DILR: LR chapter LOD1 (or DI once Ratio-Proportion done)', meta: '11:45 AM – 1:45 PM · 2 hrs', subj: 'DILR' },
+      { id: 'p1c', text: 'Session 3 — VARC: 2 RC passages + analysis + ET editorial (15 min)', meta: '2:45 – 4:15 PM · 1.5 hrs', subj: 'VARC' },
+      { id: 'p1d', text: 'Session 4 — Mixed: Word Power Made Easy / Para Summary PYQs / 2IIMCAT QA', meta: '4:30 – 6:00 PM · 1.5 hrs', subj: 'Revision' },
     ];
     const PHASE1_BRIDGE_TASKS = [
       { id: 'b1', text: 'ET editorial — 1 article, read for argument structure', meta: 'Morning · 15 min', subj: 'VARC' },
@@ -2498,10 +2498,8 @@
       const vd = new Date(viewDate + 'T12:00:00');
       const isWe = vd.getDay() === 0 || vd.getDay() === 6;
       const p = currentPhase();
-      const isBridge = new Date() < new Date('2026-05-30');
       let tasks;
       if (isWe) { tasks = WEEKEND_TASKS; }
-      else if (p === 1 && isBridge) { tasks = PHASE1_BRIDGE_TASKS; }
       else if (p === 1) { tasks = PHASE1_FULLDAY_TASKS; }
       else if (p === 2) { tasks = PHASE2_TASKS; }
       else if (p === 3) { tasks = PHASE3_TASKS; }
@@ -2871,7 +2869,7 @@
     // ─── PHASES ───
     function renderPhases() {
       const now = new Date();
-      const phaseStart = [new Date('2026-05-12'), new Date('2026-07-01'), new Date('2026-09-01'), new Date('2026-10-16')];
+      const phaseStart = [new Date('2026-06-02'), new Date('2026-07-01'), new Date('2026-09-01'), new Date('2026-10-16')];
       const phaseEnd = [new Date('2026-06-30'), new Date('2026-08-31'), new Date('2026-10-15'), CAT_DATE];
       const cur = currentPhase();
       document.getElementById('phaseItems').innerHTML = PHASE_DATA.map((p, i) => {
